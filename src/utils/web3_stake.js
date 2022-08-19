@@ -6,16 +6,16 @@
 
 // 主网
 
-const regular = 'TQQfPrKFrq6ebXBG6HWcfmvbfafgyaU1pU';
-const contractAddress = 'THNqmcaX1xGRJvwXFa9z5JEjWN5Dy1jDT2';// THNqmcaX1xGRJvwXFa9z5JEjWN5Dy1jDT2
-const contractAddress_eotc = 'TWP9nhCPWPa6Wr1wSgNY228jGgZ3vzjw4u';//TEt19qEdJM2sPBxLB5XmJGWijT6UvFbs1K
-const contractAddress_xeotc = 'TTodNc8GxdWiCVvSVNCmwwFy5cocnP9QdE';//TJ2ijtG2xfaEhrLrU81h742bPfcHL4CL1w
+// const regular = 'TQQfPrKFrq6ebXBG6HWcfmvbfafgyaU1pU';
+// const contractAddress = 'THNqmcaX1xGRJvwXFa9z5JEjWN5Dy1jDT2';// THNqmcaX1xGRJvwXFa9z5JEjWN5Dy1jDT2
+// const contractAddress_eotc = 'TWP9nhCPWPa6Wr1wSgNY228jGgZ3vzjw4u';//TEt19qEdJM2sPBxLB5XmJGWijT6UvFbs1K
+// const contractAddress_xeotc = 'TTodNc8GxdWiCVvSVNCmwwFy5cocnP9QdE';//TJ2ijtG2xfaEhrLrU81h742bPfcHL4CL1w
 
 //测试网
-// const regular = 'TCZcvTpH8F1wk9m3U9fvYcA8SsE492Ai77';
-// const contractAddress = 'TXS4RzuouiekwcnU8SbEdgvypbESeGWuW8';
-// const contractAddress_eotc = 'TEt19qEdJM2sPBxLB5XmJGWijT6UvFbs1K';
-// const contractAddress_xeotc = 'TJ2ijtG2xfaEhrLrU81h742bPfcHL4CL1w';
+const regular = 'TCZcvTpH8F1wk9m3U9fvYcA8SsE492Ai77';
+const contractAddress = 'TXS4RzuouiekwcnU8SbEdgvypbESeGWuW8';
+const contractAddress_eotc = 'TEt19qEdJM2sPBxLB5XmJGWijT6UvFbs1K';
+const contractAddress_xeotc = 'TJ2ijtG2xfaEhrLrU81h742bPfcHL4CL1w';
 
 import Vue from "vue";
 import loadingToast from "@/components/loading-toast";
@@ -43,7 +43,7 @@ async function usdtsend(contractAds, val, address) {
 			shouldPollResponse: false
 		});
 
-		Vue.$toast.success('授权成功！');
+		Vue.$toast.success('授权成功，请继续完成质押操作！');
 	} catch (e) {
 		Vue.$toast.error('授权失败！');
 		// valmes.style.display = 'none';
@@ -196,8 +196,8 @@ function hx(num) {
 		})
 	};
 	return new Promise((resolve, reject) => {
-		fetch('https://api.trongrid.io/wallet/gettransactionbyid', options)
-			// fetch('https://api.shasta.trongrid.io/wallet/gettransactionbyid', options)
+		// fetch('https://api.trongrid.io/wallet/gettransactionbyid', options)
+			fetch('https://api.shasta.trongrid.io/wallet/gettransactionbyid', options)
 			.then(response => response.json())
 			.then(response => {
 				resolve(response);

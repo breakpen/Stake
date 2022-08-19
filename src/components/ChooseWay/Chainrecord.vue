@@ -1,6 +1,13 @@
 <template>
   <div>
-    <van-nav-bar :title="title" :border="false" fixed placeholder left-arrow @click-left="$router.back()" />
+    <van-nav-bar
+      :title="title"
+      :border="false"
+      fixed
+      placeholder
+      left-arrow
+      @click-left="$router.back()"
+    />
     <div class="content">
       <div class="top">
         <div class="frist">
@@ -26,7 +33,10 @@
         <div class="orderList" v-for="(item,index) in list" :key="index">
           <div class="listTop">
             <p>订单编号: {{item.id}}</p>
-            <p>{{item.date}}</p>
+            <div class="topFlex">
+              <p>{{item.date}}</p>
+              <p v-if="item.state==1">质押到期天数:{{item.time}}天</p>
+            </div>
           </div>
           <div class="listCenter">
             <div>
@@ -39,7 +49,10 @@
               <p>+{{item.reward}}</p>
             </div>
           </div>
-          <div class="listState" :class="item.state==1?'State2':item.state==2?'State3':'State1'">{{item.text}}</div>
+          <div
+            class="listState"
+            :class="item.state==1?'State2':item.state==2?'State3':'State1'"
+          >{{item.text}}</div>
         </div>
       </div>
     </div>
@@ -105,6 +118,7 @@ export default {
               if (Newdate / 1000 > nowDate) {
                 i.state = 1
                 i.text = '质押中'
+                i.time = ((Newdate / 1000 - nowDate) / (3600 * 24)).toFixed(0)
                 this.allzy = Number(Number(this.allzy) + i.amount).toFixed(2)
               } else {
                 i.state = 2
@@ -118,8 +132,8 @@ export default {
               i.text = '已赎回'
               this.allsy = Number(Number(this.allsy) + i.reward).toFixed(2)
             }
-            i.amount=i.amount.toFixed(2)
-            i.reward=i.reward.toFixed(2)
+            i.amount = i.amount.toFixed(2)
+            i.reward = i.reward.toFixed(2)
 
             let count = 9 - String(i.id).length
             //订单号补0
@@ -129,7 +143,7 @@ export default {
               }
             }
           }
-          this.list = res
+          this.list = res.reverse()
           Toast.clear()
         })
         .catch((err) => {
@@ -255,13 +269,16 @@ export default {
       }
       .listTop {
         border-bottom: 1px solid #2e3346;
-        margin-bottom: 20px;
+        margin-bottom: 40px;
+
         p:first-child {
           opacity: 1;
-          margin-bottom: 10px;
         }
-        p:last-child {
-          margin-bottom: 20px;
+        
+        .topFlex {
+          display: flex;
+          justify-content: space-between;
+          margin: 40px 0 20px;
         }
       }
     }
