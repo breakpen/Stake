@@ -75,7 +75,7 @@ export const EotcLoginmes = ({ wallet }) => {
   const data = {
     wallet,
     otype: getItem("netType"),
-    sign: getItem("mysign"),
+    sign: getItem("signPledge"),
   };
 
   return request({
@@ -158,7 +158,7 @@ export const Update = (data) => {
 //审核数据获取、通过、打回
 export const EotcKyc = ({
   pid = localStorage.getItem("uid"),
-  sign = localStorage.getItem("mysign"),
+  sign = localStorage.getItem("signPledge"),
   uid = 0,
   kyc = 0,
   msg = "",
@@ -173,7 +173,7 @@ export const EotcKyc = ({
 //释放EOTC
 export const Get_MyEOTC = ({
   uid = localStorage.getItem("uid"),
-  sign = localStorage.getItem("mysign"),
+  sign = localStorage.getItem("signPledge"),
 }) => {
   const params = { uid, sign };
   return request({
@@ -185,7 +185,7 @@ export const Get_MyEOTC = ({
 //加速
 export const myeotc_js = ({
   uid = localStorage.getItem("uid"),
-  sign = localStorage.getItem("mysign"),
+  sign = localStorage.getItem("signPledge"),
 }) => {
   const params = { uid, sign };
   return request({
@@ -197,7 +197,7 @@ export const myeotc_js = ({
 //获取团队人员列表
 export const GetMyTeams = ({
   uid = localStorage.getItem("uid"),
-  sign = localStorage.getItem("mysign"),
+  sign = localStorage.getItem("signPledge"),
 }) => {
   const params = { uid, sign };
   return request({
@@ -234,7 +234,7 @@ export const GetSymx = ({
 //获取推荐人信息
 export const PidMsg = ({
   uid = localStorage.getItem("uid"),
-  sign = localStorage.getItem("mysign"),
+  sign = localStorage.getItem("signPledge"),
   // uid=205433
 }) => {
   const params = { uid, sign };
@@ -247,7 +247,7 @@ export const PidMsg = ({
 //获取和设置自身电报群
 export const SetTelegram = ({
   uid = localStorage.getItem("uid"),
-  sign = localStorage.getItem("mysign"),
+  sign = localStorage.getItem("signPledge"),
   telegram = "",
 }) => {
   const params = { uid, sign, telegram };
@@ -285,7 +285,7 @@ export const addOrder = ({
     uid: getItem("uid"),
     ads: getItem("myaddress"),
     otype: getItem("netType"),
-    sign: getItem("mysign"),
+    sign: getItem("signPledge"),
     type, // 1收购  0出售
     did, // 固定值 意义暂定
     cash, // 1可接受现金  -1 只接受现金
@@ -387,7 +387,7 @@ export const UPdateOrder_sj = ({
     type, // 1收购  0出售
     did, // 订单号
     uid: getItem("uid"),
-    sign: getItem("mysign"),
+    sign: getItem("signPledge"),
   };
   return request({
     method: "POST",
@@ -418,7 +418,7 @@ export const subbuysellorder = ({
     mail,
     pay: selectpayk,
     type,
-    sign: getItem("mysign"),
+    sign: getItem("signPledge"),
   };
 
   return request({
@@ -429,12 +429,12 @@ export const subbuysellorder = ({
 };
 //获取质押记录
 export const MyStakeList = ({
-  ads=localStorage.getItem('walletAddress'),
-  net=localStorage.getItem('net'),
+  ads = localStorage.getItem('walletAddress'),
+  net = localStorage.getItem('net'),
   zq
 }) => {
   const params = {
-    ads,net,zq
+    ads, net, zq
   };
   return request({
     method: "POST",
@@ -444,11 +444,11 @@ export const MyStakeList = ({
 };
 //获取app可质押余额
 export const MyEOTC = ({
-  ads=localStorage.getItem('walletAddress'),
-  net=localStorage.getItem('net')
+  ads = localStorage.getItem('walletAddress'),
+  net = localStorage.getItem('net')
 }) => {
   const params = {
-    ads,net
+    ads, net
   };
   return request({
     method: "POST",
@@ -458,14 +458,15 @@ export const MyEOTC = ({
 };
 //质押app资产
 export const StakingEotc = ({
-  ads=localStorage.getItem('walletAddress'),
-  net=localStorage.getItem('net'),
-  sign=localStorage.getItem('mysign'),
+  ads = localStorage.getItem('walletAddress'),
+  net = localStorage.getItem('net'),
+  sign = localStorage.getItem('signPledge'),
   num,
-  zq
+  zq,
+  hx = localStorage.getItem('apphx')
 }) => {
   const params = {
-    ads,net,sign,num,zq
+    ads, net, sign, num, zq, hx
   };
   return request({
     method: "POST",
@@ -473,6 +474,41 @@ export const StakingEotc = ({
     params,
   });
 };
+//隐藏：未释放查询
+export const GetAppStake = ({
+  month,
+  date
+}) => {
+  const params = {
+    month, date
+  };
+  return request({
+    method: "POST",
+    url: "/api/OTC/GetAppStake",
+    params,
+  });
+};
+//更新app质押
+// export const UpdateStakeOrder = (
+//   token=localStorage.getItem('Token')
+// ) => {
+//   const params = {
+//     token
+//   };
+//   return request({
+//     method: "POST",
+//     url: "/api/OTC/UpdateStakeOrder",
+//     params,
+//   });
+// };
+export const UpdateStakeOrder = (data) => {
+  return request({
+    method: "Post",
+    url: "/api/OTC/UpdateStakeOrder",
+    data
+  });
+};
+
 /**
  *!商家更新订单状态， 待付款 更新成 已付款
  *!确认已收款 进行放币  订单完成

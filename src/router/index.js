@@ -24,21 +24,35 @@ const routes = [
 				name: 'Pledges_home',
 				component: () => import('@/components/ChooseWay/nft_home')
 			},
-			{
-				path: 'Introduction',
-				name: 'Introduction',
-				component: () => import('@/components/ChooseWay')
-			},
+
 
 
 		]
 	},
+
 	{
 		path: '/Chainrecord',
 		name: 'Chainrecord',
 		component: () => import('@/components/ChooseWay/Chainrecord')
 	},
-
+	
+	{
+		path: '/Introduction',
+		name: 'Introduction',
+		component: () => import('@/components/ChooseWay')
+	},
+	
+	{
+		path: '/conceal',
+		name: 'conceal',
+		component: () => import('@/components/ChooseWay/conceal')
+	},
+	
+	{
+		path: '/verify',
+		name: 'verify',
+		component: () => import('@/components/ChooseWay/verify')
+	},
 	{
 		path: '/404',
 		component: () => import('@/components/NotFound')

@@ -50,7 +50,7 @@ export default {
         { title: "EOTC官网", event: "https://eotc.im" },
         { title: "链上理财赚币", event: "https://fi.eotc.im/" },
         { title: "去中心化 OTC 交易所", event: "https://trx.eotc.im/"  },
-        { title: "去中心化币币交易所", },
+        { title: "去中心化币币交易所", event: "https://swap.eotc.im/" },
         { title: "去中心化借贷交易所" },
         { title: "去中心化合约交易所" },
         { title: "DID去中心化身份系统" },

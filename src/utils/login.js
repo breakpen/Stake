@@ -7,7 +7,7 @@ let isok = false;
 function jiaoyi(val) {
     window.location.href = "index.html?id=" + val;
 }
-
+// var signMes = "EOTC请求您签名确认,签名不消耗GAS.";
 import $router from "@/router"
 import { Toast } from 'vant';
 
@@ -87,7 +87,8 @@ export const reg = function (that, value1, wallet, email, verification, loginSta
     var reg1 = /^\d{6}$/;
     var reg2= /[@]/im;
     if (sign == null || sign == "") {
-        userSign(window.signMes, null);
+        // console.log(signMes)
+        userSign(signMes);
         return false;
     }
     if (wallet_ads.length < 30) {

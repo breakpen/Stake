@@ -1,150 +1,153 @@
 <template>
   <div class="home">
-    <div class="banner">
-      <img src="@/assets/banner.png" alt @click="Play_explanation" />
+    <div class="banner" @click="Play_explanation()">
+      <img src="@/assets/banner.png" alt />
     </div>
     <main class="main">
-      <h6>期限</h6>
+      <p class="title">质押期限</p>
       <van-grid :column-num="4" clickable :gutter="10" :border="false">
-        <van-grid-item v-for="(item, i) in tabList" class="item_tab" :class="{ active: item.isActive }" :key="i" :text="item.text" @click="activeTab(i)" />
+        <van-grid-item
+          v-for="(item, i) in tabList"
+          class="item_tab"
+          :class="{ active: item.isActive }"
+          :key="i"
+          :text="item.text"
+          @click="activeTab(i)"
+        />
       </van-grid>
 
       <div class="nh-ly">
         <p>
           <span>年化收益率</span>
-          <span>{{year}}</span>
+          <span>{{ year }}</span>
         </p>
-        <p>
-          <van-button round @click="showTotaldata">查看统计数据</van-button>
-          <span>
-            <span v-if="activeType === 'Flow'">1m</span> APY
-          </span>
+        <p v-if="activeType === 'Regular'" @click="go()">
+          <span>质押记录</span>
+          <van-icon name="description" />
         </p>
-      </div>
-      <div class="record">
-        <van-cell v-if="activeType === 'Regular'" @click="go()" title="质押记录" is-link />
-      </div>
-      <div class="zysh">
-        <van-button class="buysell" :class="{ 'active-btn': !isPledges }" plain size="small" @click="changeisPledges()">质押</van-button>
-        <van-button :class="{ 'active-btn': isPledges }" class="btn2 buysell" plain size="small" @click="changeisPledges()">赎回</van-button>
       </div>
 
-      <!-- <div class="cut" v-if="activeType==='Regular'&& !isPledges ">
-        <p v-show="switchShow">链上资产质押</p>
-        <p v-show='!switchShow'>APP资产质押</p>
-        <van-icon name="exchange" @click="exchange" />
-      </div>-->
+      <div class="zysh">
+        <van-button
+          class="buysell"
+          :class="{ 'active-btn': !isPledges }"
+          plain
+          size="large"
+          @click="changeisPledges()"
+        >质押</van-button>
+        <van-button
+          :class="{ 'active-btn': isPledges }"
+          class="btn2 buysell"
+          plain
+          size="large"
+          @click="changeisPledges()"
+        >赎回</van-button>
+      </div>
 
       <!-- 质押 -->
       <!-- 活期质押 -->
       <div v-if="activeType === 'Flow'">
         <section class="section-container" v-if="isPledges">
-          <div class="sec-top">
-            <span>质押 EOTC</span>
-            <p>1 xEOTC = {{conversion}}</p>
-          </div>
           <div class="sec-main">
             <p>
               <input class="outlineInput" type="number" v-model="zynum" placeholder="0 EOTC" />
               <span>
-                余额: {{myEOTC}}
-                <van-button @click="zynum=myEOTC">全部</van-button>
+                <van-button @click="zynum = myEOTC">全部</van-button>
               </span>
             </p>
-
-            <div class="estimate" v-if="zynum!=''">
-              预估收益：
-              <span>{{earnings}} EOTC</span>
-            </div>
-
-            <van-button round block class="zyBtn" @click="zysubmit">质押</van-button>
+            <p>
+              <span>余额:</span>
+              {{ myEOTC }}
+            </p>
           </div>
+          <div class="estimate" v-if="zynum != ''">
+            预估收益：
+            <span>{{ earnings }} EOTC</span>
+          </div>
+
+          <van-button round block class="zyBtn" @click="zysubmit">质押</van-button>
         </section>
 
         <section class="section-container" v-else>
-          <div class="sec-top">
-            <span>赎回 EOTC</span>
-            <p>1 xEOTC = {{conversion}}</p>
-          </div>
           <div class="sec-main">
             <p>
-              <input class="outlineInput" v-model="shnum" type="number" placeholder="0 xEOTC" />
+              <input class="outlineInput" type="number" v-model="shnum" placeholder="0 xEOTC" />
               <span>
-                质押到期: {{xEOTC}}
-                <van-button @click="shnum=xEOTC">全部</van-button>
+                <van-button @click="shnum = xEOTC">全部</van-button>
               </span>
             </p>
-            <van-button round block @click="shsumit" class="zyBtn">赎回</van-button>
+            <p>
+              <span>质押到期:</span>
+              {{ xEOTC }}
+            </p>
           </div>
+          <van-button round block class="zyBtn" @click="shsumit">赎回</van-button>
         </section>
       </div>
 
       <!-- 定期质押 -->
       <div v-else>
         <section class="section-container" v-if="isPledges">
-          <!-- <div class="sec-top">
-            <span>质押 EOTC</span>
-            <p >1 xEOTC = {{conversion}}</p>
-          </div>-->
+          <van-tabs
+            v-model="switchShow"
+            background="#080b13"
+            title-active-color="#fff"
+            title-inactive-color="#888893"
+            color="#FDD16A"
+            @click="exchange"
+            :style="{ margin: '0 0 15px' }"
+          >
+            <van-tab title="链上资产质押"></van-tab>
+            <van-tab title="APP资产质押"></van-tab>
+          </van-tabs>
+
           <div class="sec-main">
-            <p class="header-top" :style="{ padding: '0px 15px 15px 0' }">
-              <span v-show="switchShow">链上资产质押</span>
-              <span v-show="!switchShow">APP资产质押</span>
+            <p>
+              <input class="outlineInput" type="number" v-model="zynum" placeholder="0 EOTC" />
               <span>
-                <van-icon name="exchange" @click="exchange" />
+                <van-button @click="zynum = myEOTC">全部</van-button>
               </span>
             </p>
             <p>
-              <input class="outlineInput" v-model="zynum" type="number" placeholder="0 EOTC" />
-              <span>
-                余额: {{myEOTC}}
-                <van-button @click="zynum=myEOTC">全部</van-button>
-              </span>
+              <span>余额:</span>
+              {{ myEOTC }}
             </p>
-            <div class="estimate" v-if="zynum!=''">
-              预估收益：
-              <span>{{earnings}} EOTC</span>
-            </div>
-            <van-button round block class="zyBtn" @click="zysubmit">质押</van-button>
           </div>
+          <div class="estimate" v-if="zynum != ''">
+            预估收益：
+            <span>{{ earnings }} EOTC</span>
+          </div>
+
+          <van-button round block class="zyBtn" @click="zysubmit">质押</van-button>
         </section>
+
+        <!-- </section> -->
         <section class="section-container" v-else>
-          <!-- <div class="sec-top">
-            <span>赎回 EOTC</span>
-            <p>1 xEOTC = {{conversion}}</p>
-          </div>-->
-          <!-- <div class="sec-main">
-            <p>
-              <input class="outlineInput" v-model="shnum" type="number" placeholder="0 xEOTC">
-              <span>质押到期: {{xEOTC}} <van-button @click="zynum=xEOTC">全部</van-button></span>
-            </p>
-            <van-button round block @click="shsumit" class="zyBtn"> 赎回 </van-button>
-          </div>-->
-          <div class="empty" v-if="list.length==0">
+          <div class="empty" v-if="list.length == 0">
             <img src="@/static/icon/kong.png" alt />
             <p>暂无可赎回数据</p>
           </div>
-          <div class="list" v-for="(item,index) in list" :key="index">
+          <div class="list" v-for="(item, index) in list" :key="index">
             <div class="listTop">
-              <p>订单编号: {{item.order}}</p>
-              <p>{{item.startTime}}</p>
+              <p>订单编号: {{ item.order }}</p>
+              <p>{{ item.startTime }}</p>
             </div>
             <div class="listCenter">
               <div>
                 <p>质押数量</p>
-                <p>{{item.amount}}</p>
+                <p>{{ item.amount }}</p>
               </div>
               <div>
                 <p>预计收益</p>
-                <p>+{{item.reward}}</p>
+                <p>+{{ item.reward }}</p>
               </div>
             </div>
             <div class="buttons">
               <div class="box">
-                <van-button round block color="#28293D" @click="SecondPledge(index)">继续质押</van-button>
+                <div @click="SecondPledge(index)">继续质押</div>
               </div>
               <div class="box">
-                <van-button round block color="#2E3346" @click="ransom(index)">赎回</van-button>
+                <div @click="ransom(index)">赎回</div>
               </div>
             </div>
           </div>
@@ -162,7 +165,7 @@
               <aside>
                 <img :src="require('@/assets/logozi.png')" alt />
                 <p>
-                  <span>{{xEOTC}}</span>
+                  <span>{{ xEOTC }}</span>
                   <span>xEOTC</span>
                 </p>
               </aside>
@@ -176,7 +179,7 @@
               <aside>
                 <img :src="require('@/assets/logojin.png')" alt />
                 <p>
-                  <span>{{pending}}</span>
+                  <span>{{ pending }}</span>
                   <span>EOTC</span>
                 </p>
               </aside>
@@ -213,12 +216,15 @@ import {
   getTrxBalance,
   sfeotc,
   MyRegularUnstaking,
-  MySecondPledge
+  MySecondPledge,
 } from '@/utils/web3_stake'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 import { StakingEotc } from '@/api/trxRequest'
 export default {
   name: 'zy-home',
+  components: {
+    [Dialog.Component.name]: Dialog.Component,
+  },
   data() {
     return {
       tabList: [
@@ -247,7 +253,7 @@ export default {
       xEOTC: 'Loading', //当前质押
       myEOTC: 'Loading',
       //切换开关
-      switchShow: true,
+      switchShow: 0,
       //质押数量
       zynum: '',
       //赎回数量
@@ -282,6 +288,7 @@ export default {
     },
   },
   methods: {
+    
     init() {
       myxEOTCAmount(this)
       myEOTCAmount(this)
@@ -301,7 +308,12 @@ export default {
         this.nowaday = ''
       }
       if ([1, 2, 3].includes(e)) {
+        console.log(this.switchShow)
+        if (this.switchShow == 1) {
+          this.myEOTC = Number(localStorage.getItem('appEOTC')).toFixed(6)
+        }
         this.activeType = 'Regular'
+        // this.myEOTC = Number(localStorage.getItem('appEOTC')).toFixed(6)
         if (this.activeType == 'Regular' && !this.isPledges) {
           this.redeemList()
         }
@@ -312,6 +324,8 @@ export default {
           this.earnings = Number((this.zynum * res * this.nowaday) / 12).toFixed(2)
         })
       } else if (e === 0) {
+        this.myEOTC = Number(localStorage.getItem('myEOTCNum'))
+
         this.activeType = 'Flow'
         this.year = localStorage.getItem('LiveYear') + '%'
         this.earnings = Number((this.zynum * localStorage.getItem('LiveYear')) / 100).toFixed(2)
@@ -320,11 +334,11 @@ export default {
 
     // app 与链上切换
     exchange() {
-      this.switchShow = !this.switchShow
-      if (this.switchShow) {
-        this.myEOTC = Number(localStorage.getItem('myEOTCNum')).toFixed(2)
+      console.log(this.switchShow)
+      if (this.switchShow == 0) {
+        this.myEOTC = Number(localStorage.getItem('myEOTCNum')).toFixed(6)
       } else {
-        this.myEOTC = Number(localStorage.getItem('appEOTC')).toFixed(2)
+        this.myEOTC = Number(localStorage.getItem('appEOTC')).toFixed(6)
       }
     },
     showTotaldata() {
@@ -338,7 +352,8 @@ export default {
     },
     //定期质押活动介绍
     Play_explanation() {
-      this.$router.push('Introduction')
+      console.log(123)
+      this.$router.push({ name: 'Introduction' })
     },
     //质押事件
     zysubmit() {
@@ -349,17 +364,26 @@ export default {
         this.$toast.warning('您的EOTC余额不足！')
       } else if (this.nowaday == '') {
         MyStaking(this.zynum, this)
-      } else if (this.nowaday != '' && this.switchShow) {
+      } else if (this.nowaday != '' && this.switchShow == 0) {
         MyRegularStaking(this.zynum, this.nowaday, this)
-      } else if (this.nowaday != '' && !this.switchShow) {
+      } else if (this.nowaday != '' && this.switchShow == 1) {
         // userSign('EOTC请求您签名确认,签名不消耗GAS.', this.appzy)
-        userSign('EOTC请求您签名确认,签名不消耗GAS.', function () {
-          getTrxBalance(function () {
-            sfeotc(function () {
-              that.appzy(that)
-            })
+        // for(let i=0;i<10;i++){
+        Toast.loading({
+          duration: 0, // 持续展示 toast
+          forbidClick: true,
+          message: '质押中',
+        })
+        console.log(this.zynum)
+        // userSign('EOTC请求您签名确认,签名不消耗GAS.', function(){
+        getTrxBalance(function () {
+          sfeotc(function () {
+            that.appzy(that)
           })
         })
+        // })
+
+        // }
       }
     },
     // 赎回事件
@@ -378,19 +402,47 @@ export default {
     },
     //app资产质押
     appzy(that) {
-      StakingEotc({ num: that.zynum, zq: that.nowaday }).then((res) => {
-        let state = res.data.State
-        if (state > 0) {
-          let num = Number(localStorage.getItem('appEOTC') - that.zynum).toFixed(2)
+      console.log(111)
+      // that.zynum
+      StakingEotc({ num: that.zynum, zq: that.nowaday, net: '' })
+        .then((res) => {
+          // let state = res.data.State
+          Toast.clear()
+          // if (state > 0) {
+          let num = Number(localStorage.getItem('appEOTC') - that.zynum).toFixed(6)
           localStorage.setItem('appEOTC', num)
           that.myEOTC = num
           that.$toast.success('质押成功')
-        } else {
-          that.$toast.error('质押失败')
-        }
-        console.log(res)
-      })
+
+          console.log(res)
+        })
+        .catch((err) => {
+          let data = [
+            that.zynum,
+            that.nowaday,
+            localStorage.getItem('walletAddress'),
+            localStorage.getItem('signPledge'),
+            localStorage.getItem('apphx'),
+          ]
+          Dialog.alert({
+            title: '错误信息',
+            message: data,
+            showConfirmButton: false,
+          })
+
+          that.$toast.warning('错误信息，请截图发送给管理员！', {
+            timeout: 30000,
+          })
+          that.$toast.warning(err.message, {
+            timeout: 30000,
+          })
+          setTimeout(() => {
+            Dialog.close()
+            Toast.clear()
+          }, 30000)
+        })
     },
+
     go() {
       localStorage.setItem('zq', this.nowaday)
       this.$router.push({ name: 'Chainrecord' })
@@ -404,7 +456,7 @@ export default {
       })
       Redeemable(this.nowaday)
         .then((res) => {
-          this.list=[]
+          this.list = []
           if (res.length == 0) {
             Toast.clear()
             return
@@ -436,7 +488,7 @@ export default {
       MyRegularUnstaking(num, this.list[index].id, this.nowaday, this, index)
     },
     //二次质押
-    SecondPledge(index){
+    SecondPledge(index) {
       let num = this.list[index].amount + this.list[index].reward
       MySecondPledge(num, this.list[index].id, this.nowaday, this, index)
     },
@@ -496,12 +548,13 @@ export default {
 
 <style lang="less" scoped>
 .outlineInput {
+  font-size: 32px;
   outline: none;
   background: none;
   border: none;
-  height: 26px;
+  height: 52px;
   caret-color: #fff;
-  width: 40%;
+  width: 60%;
   color: #fff;
 }
 .estimate {
@@ -549,17 +602,33 @@ export default {
     align-items: baseline;
     background-color: rgb(32, 34, 48);
     padding: 25px;
-    p {
-      display: flex;
+    border-radius: 20px;
+    p:first-child {
+      padding-bottom: 30px;
+      border-bottom: 1px solid #5f616c;
       align-items: center;
       width: 100%;
       justify-content: space-between;
+    }
+    p:nth-child(2) {
+      padding-top: 30px;
+      color: #ffe4c4;
+      span {
+        color: #fff;
+        opacity: 50%;
+      }
+    }
+    p {
+      display: flex;
+
       span:last-child {
-        font-size: 12px;
+        // font-size: 12px;
         display: flex;
         align-items: center;
+        // width: 30%;
         button {
-          height: 50px;
+          height: 75px;
+          width: 30vw;
           background-color: rgb(32, 34, 48);
           border: 2px solid #999;
           margin-left: 15px;
@@ -569,13 +638,14 @@ export default {
         }
       }
     }
-    .zyBtn {
-      margin-top: 0.6rem;
-      background-color: #2e3346;
-      border: none;
-      color: #fff;
-      font-weight: 700;
-    }
+  }
+  .zyBtn {
+    margin-top: 0.6rem;
+    background-color: #fdd16a;
+    border: none;
+    border-radius: 40px;
+    color: #000;
+    font-weight: 700;
   }
   .sec-top {
     display: flex;
@@ -634,6 +704,19 @@ export default {
       justify-content: space-between;
       .box {
         width: 45%;
+        div {
+          text-align: center;
+          padding: 22px 0;
+          border: 3px solid #fdd16a;
+          border-radius: 48px;
+          color: #fdd16a;
+        }
+      }
+      .box:last-child {
+        div {
+          background: #fdd16a;
+          color: #000;
+        }
       }
     }
   }
@@ -641,7 +724,8 @@ export default {
 
 .zysh {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  font-size: 32px;
   margin: 30px 0;
   padding: 10px 0;
   background-color: #202231;
@@ -661,8 +745,8 @@ export default {
     border: none;
   }
   .buysell {
-    background-color: #161622;
-    color: #fff;
+    background-color: #f6dea7;
+    color: #000;
   }
   .active-btn {
     background-color: #202231;
@@ -696,33 +780,55 @@ export default {
     }
   }
   .main {
-    h6 {
-      margin: 12px;
+    font-size: 28px;
+    .title {
+      margin-bottom: 24px;
     }
   }
   .nh-ly {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
-    font-size: 0.4rem;
-    background-color: #73613d;
-    padding: 25px;
-    border-radius: 15px;
-    margin-top: 0.8rem;
-    p {
+    margin-top: 40px;
+    font-size: 32px;
+    p:first-child {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      button {
-        height: 0.8rem;
-        font-weight: 700;
-        color: #000;
-        background-color: rgb(250, 209, 113);
+      span:first-child {
+        opacity: 50%;
+      }
+      span:last-child {
+        display: block;
+        margin-left: 20px;
+        color: #ffe2ba;
       }
     }
-    p:first-child {
-      padding: 20px 0;
+    p:last-child {
+      display: flex;
+      align-items: center;
+      span:first-child {
+        display: block;
+        margin-right: 10px;
+      }
     }
+    // font-size: 0.4rem;
+    // background-color: #73613d;
+    // padding: 25px;
+    // border-radius: 15px;
+    // margin-top: 0.8rem;
+    // p {
+    //   display: flex;
+    //   justify-content: space-between;
+    //   align-items: center;
+    //   button {
+    //     height: 0.8rem;
+    //     font-weight: 700;
+    //     color: #000;
+    //     background-color: rgb(250, 209, 113);
+    //   }
+    // }
+    // p:first-child {
+    //   padding: 20px 0;
+    // }
   }
   /deep/ .item_tab {
     div {
